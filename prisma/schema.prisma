@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id             String             @id @default(uuid())
+  nome           String
+  dataNascimento DateTime
+  rg             String             @unique
+  cpf            String             @unique
+  profissao      String
+  estadoCivil    String
+  genero         String
+  email          String
+  password       String
+  createdAt      DateTime           @default(now())
+  enderecos      EnderecoUsuarios[]
+  inquilinos     Inquilino[]
+  imoveis        Imovel[]
+  locacoes       Locacao[]
+
+  @@map("usuarios")
+}
+
+model Endereco {
+  id         String             @id @default(uuid())
+  estado     String
+  cidade     String
+  bairro     String
+  cep        String
+  logradouro String
+  createdAt  DateTime           @default(now())
+  usuarios   EnderecoUsuarios[]
+  imovel     Imovel[]
+
+  @@map("enderecos")
+}
+
+model EnderecoUsuarios {
+  id         String   @id @default(uuid())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId  String
+  endereco   Endereco @relation(fields: [enderecoId], references: [id])
+  enderecoId String
+  numero     Int
+
+  @@map("enderecos_usuarios")
+}
+
+model Inquilino {
+  id             String   @id @default(uuid())
+  nome           String
+  dataNascimento DateTime
+  rg             String   @unique
+  cpf            String   @unique
+  profissao      String
+  estadoCivil    String
+  genero         String
+  email          String
+  createdAt      DateTime @default(now())
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId String
+  locacoes  Locacao[]
+
+  @@map("inquilinos")
+}
+
+model Imovel {
+  id         String   @id @default(uuid())
+  nomeImovel String
+  descricao  String
+  createdAt  DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId String
+
+  endereco   Endereco @relation(fields: [enderecoId], references: [id])
+  enderecoId String
+
+  locacoes Locacao[]
+
+  @@map("imoveis")
+}
+
+model Locacao {
+  id            String   @id @default(uuid())
+  tempoContrato Int
+  dataInicio    DateTime
+  dataFim       DateTime
+  valorLocacao  Decimal
+  dataCriacao   DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId String
+
+  inquilino   Inquilino @relation(fields: [inquilinoId], references: [id])
+  inquilinoId String
+
+  imovel   Imovel @relation(fields: [imovelId], references: [id])
+  imovelId String
+
+  @@map("locacoes")
+}
