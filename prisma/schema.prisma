@@ -31,27 +31,29 @@ model Usuario {
 }
 
 model Endereco {
-  id         String             @id @default(uuid())
-  estado     String
-  cidade     String
-  bairro     String
-  cep        String
-  logradouro String
-  createdAt  DateTime           @default(now())
-  usuarios   EnderecoUsuarios[]
-  imovel     Imovel[]
+  id               String             @id @default(uuid())
+  estado           String
+  cidade           String
+  bairro           String
+  cep              String
+  logradouro       String
+  createdAt        DateTime           @default(now())
+  enderecosUsuario EnderecoUsuarios[]
+  imovel           Imovel[]
 
   @@map("enderecos")
 }
 
 model EnderecoUsuarios {
-  id         String   @id @default(uuid())
+  id     String @id @default(uuid())
+  numero Int
+
   usuario    Usuario  @relation(fields: [usuarioId], references: [id])
   usuarioId  String
   endereco   Endereco @relation(fields: [enderecoId], references: [id])
   enderecoId String
-  numero     Int
 
+  @@unique([usuarioId, enderecoId])
   @@map("enderecos_usuarios")
 }
 
@@ -108,5 +110,24 @@ model Locacao {
   imovel   Imovel @relation(fields: [imovelId], references: [id])
   imovelId String
 
+  recibos Recibo[]
+
   @@map("locacoes")
+}
+
+model Recibo {
+  id           String   @id @default(uuid())
+  numeroRecibo Int
+  dataInicio   DateTime
+  dataFim      DateTime
+  valorAgua    Decimal
+  valorLuz     Decimal
+  juros        Decimal
+  total        Decimal
+  totalExtenso String
+
+  locacao   Locacao @relation(fields: [locacaoId], references: [id])
+  locacaoId String
+
+  @@map("recibos")
 }
