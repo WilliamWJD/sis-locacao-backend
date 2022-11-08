@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { BcryptHashGenerator } from '../src/modules/usuario/providers/BcryptHashGenerator';
+
+const bcryptHashGenerator = new BcryptHashGenerator();
 
 const prisma = new PrismaClient();
 
@@ -14,7 +16,7 @@ async function main() {
             estadoCivil: "CASADO",
             genero: "MASCULINO",
             email: "narcisio.j.dias@gmail.com",
-            password: "123456789",
+            password: await bcryptHashGenerator.hashGenerator("123456789"),
             enderecos: {
                 create: {
                     endereco: {
@@ -65,8 +67,6 @@ async function main() {
             imovel: true
         }
     })
-
-    console.log(imovel)
 
     const locacao = await prisma.locacao.create({
         data: {
