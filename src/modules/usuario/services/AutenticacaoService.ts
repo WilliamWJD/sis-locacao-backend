@@ -1,6 +1,7 @@
 import { sign } from 'jsonwebtoken';
 
 import { JwtConfig } from '../../../config/JwtConfig';
+import { AppError } from '../../../errors/AppError';
 import { BcryptHashGenerator } from "../providers/BcryptHashGenerator";
 import { UsuarioRepository } from '../repositories/UsuarioRepository';
 
@@ -27,12 +28,12 @@ class AutenticacaoService {
         const usuario = await usuarioRepository.buscarUsuarioPorEmail(email);
 
         if (!usuario) {
-            throw new Error("Usuário ou senha inválido");
+            throw new AppError("Usuário ou senha inválido", 401)
         }
 
         // compara senha com o hash do banco
         if (!bcryptHashGenerator.compare(senha, usuario.password)) {
-            throw new Error("Usuário ou senha inválido");
+            throw new AppError("Usuário ou senha inválido", 401)
         }
 
         // gera token jwt
