@@ -15,7 +15,7 @@ async function main() {
             profissao: "Aposentado",
             estadoCivil: "CASADO",
             genero: "MASCULINO",
-            email: "narcisio.j.dias@gmail.com",
+            email: "narcisio.dias@gmail.com",
             password: await bcryptHashGenerator.hashGenerator("123456789"),
             enderecos: {
                 create: {
