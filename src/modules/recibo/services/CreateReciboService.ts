@@ -10,6 +10,7 @@ interface Request {
     valorLuz: number,
     locacaoId: string;
     valorJuros: number;
+    userId: string;
 }
 
 class CreateReciboService {

@@ -20,7 +20,8 @@ class CreateReciboController {
             valorAgua,
             valorLuz,
             locacaoId,
-            valorJuros
+            valorJuros,
+            userId: req.user.id
         });
 
         return res.send("ok");
