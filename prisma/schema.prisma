@@ -26,6 +26,7 @@ model Usuario {
   inquilinos     Inquilino[]
   imoveis        Imovel[]
   locacoes       Locacao[]
+  recibos        Recibo[]
 
   @@map("usuarios")
 }
@@ -128,6 +129,9 @@ model Recibo {
 
   locacao   Locacao @relation(fields: [locacaoId], references: [id])
   locacaoId String
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId String
 
   @@map("recibos")
 }

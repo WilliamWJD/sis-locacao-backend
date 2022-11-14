@@ -10,21 +10,21 @@ class CreateReciboController {
             dataFim,
             valorAgua,
             valorLuz,
-            locacaoId,
-            valorJuros
+            juros,
+            locacaoId
         } = req.body;
 
-        await createReciboService.execute({
+        const recibo = await createReciboService.execute({
             dataInicio,
             dataFim,
             valorAgua,
             valorLuz,
             locacaoId,
-            valorJuros,
-            userId: req.user.id
+            juros,
+            usuarioId: req.user.id
         });
 
-        return res.send("ok");
+        return res.status(201).json(recibo);
     }
 }
 

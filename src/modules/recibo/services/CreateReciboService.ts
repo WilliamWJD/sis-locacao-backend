@@ -1,7 +1,12 @@
+import { Recibo } from '@prisma/client';
 import valorPorExtenso from 'extenso';
 
 import { prismaClient } from "../../../database/prismaClient";
 import { AppError } from "../../../errors/AppError";
+import { ReciboEntradaDto } from '../dtos/ReciboEntradaDto';
+import { ReciboRepository } from '../repositories/ReciboRepository';
+
+const reciboRepository = new ReciboRepository();
 
 interface Request {
     dataInicio: Date,
@@ -9,12 +14,12 @@ interface Request {
     valorAgua: number,
     valorLuz: number,
     locacaoId: string;
-    valorJuros: number;
-    userId: string;
+    juros: number;
+    usuarioId: string;
 }
 
 class CreateReciboService {
-    async execute(data: Request): Promise<void> {
+    async execute(data: Request): Promise<Recibo> {
         // RECUPERA DADOS DA LOCAÇÃO
         const locacao = await prismaClient.locacao.findFirst({
             where: {
@@ -37,22 +42,22 @@ class CreateReciboService {
         })
 
         // INCREMENTE NUMERO DE RECIBO
-        const numRecibo = numUltimoRecibo[0].numeroRecibo + 1;
+        const numRec = numUltimoRecibo.length === 0 ? 1 : numUltimoRecibo[0].numeroRecibo + 1;
 
         // CALCULA TOTAL DO RECIBO
-        const total = Number(locacao.valorLocacao) + data.valorAgua + data.valorLuz + data.valorJuros;
+        const total = Number(locacao.valorLocacao) + data.valorAgua + data.valorLuz + data.juros;
 
         // ESCREVE TOTAL POR EXTENSO
         const totalExtenso = valorPorExtenso(total, { mode: 'currency' });
 
         const dataPayload = {
             ...data,
-            numRecibo,
-            total,
-            totalExtenso
+            numeroRecibo: numRec,
+            total: total,
+            totalExtenso: totalExtenso,
         }
 
-        console.log(dataPayload);
+        return reciboRepository.salvaRecibo(dataPayload);
     }
 }
 
